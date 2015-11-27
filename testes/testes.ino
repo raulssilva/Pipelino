@@ -1,4 +1,23 @@
-#include <EEPROM.h> // incluir a biblioteca
+/*
+ Makers: Felipe Barbalho Rocha and Raul Silveira Silva
+ 
+ The circuit (LCD 16x2):
+ * LCD RS pin to digital pin 10
+ * LCD Enable pin to digital pin 8
+ * LCD D4 pin to digital pin 5
+ * LCD D5 pin to digital pin 6
+ * LCD D6 pin to digital pin 3
+ * LCD D7 pin to digital pin 2
+ * LCD R/W pin to ground
+ * LCD VSS pin to ground
+ * LCD VCC pin to 5V
+ * 10K resistor:
+ * ends to +5V and ground
+ * wiper to LCD VO pin (pin 3)
+ */
+
+#include <EEPROM.h> 
+#include <SoftwareSerial.h>
 #include <LiquidCrystal.h> 
 
 #define ADD    0b00000001  //''
@@ -17,24 +36,36 @@
 #define JR     0b00001011  //''
 #define JAL    0b00001100  //''
 
-
-
-LiquidCrystal lcd(12, 11, 5, 4, 3, 2); 
+SoftwareSerial writeBackSerial(10, 11); // RX, TX
+LiquidCrystal lcd(10, 8, 5, 6, 3, 2);
 
 void setup(){
   Serial.begin(9600);
-  
+  writeBackSerial.begin(9600);
   lcd.begin(16, 2); 
   lcd.setCursor(0,0); 
 }
 
 void loop(){
-  /*Endereço da EEPROM*/
-  //int address = 0;
-  /*lEITURA*/
-  //byte value = EEPROM.read(address);
-  /*ESCRITA*/
-  //EEPROM.write(address,value);
+  writeBackSerialEvent();
+  //Verificar necessidade de bolha
+}
+
+byte raeadRegister(byte address){
+  byte value = EEPROM.read(address);
+  return value;
+}
+
+void writeRegister(byte address, byte data){
+  EEPROM.write(address, data);
+}
+
+void writeBackSerialEvent(){
+  if(writeBackSerial.available()){
+      char address = writeBackSerial.read();
+      byte data = writeBackSerial.read();
+      writeRegister(address, data);
+  }
 }
 
 void serialEvent(){
@@ -44,7 +75,6 @@ void serialEvent(){
 void instructionReading(){
   char instruction = (char)Serial.read();
   executeInstruction(instruction);
-
   /*Captura a instrução*/
   //String str =  Serial.readString();
   /*Imprime na serial (teste)*/
@@ -101,10 +131,22 @@ void executeInstruction(char instruction){
 
 void executeADD(){
   if(Serial.available()==3){
-    char  param1 = (char)Serial.read();
-    char  param2 = (char)Serial.read();
-    char  param3 = (char)Serial.read();
-    /*(.........)*/
+    /*Lêr o primeiro endereço do registrador*/
+    char  param1Reg = (char)Serial.read();
+    /*Lêr o segundo endereço do registrador*/
+    byte  param2Reg = (byte)Serial.read();
+    /*Lêr o terceiro endereço do registrador*/
+    byte  param3Reg = (byte)Serial.read();
+
+    /*Lêr o valor armazenado no endereço do resgistradores*/
+    byte value1 = raeadRegister(param2Reg);
+    byte value2 = raeadRegister(param3Reg);
+
+    /*Manda os dados para o próximo estágio = (ADD [ENDEREÇO DE ESCRITA] [VALOR] [VALOR])*/
+    Serial.print(ADD);
+    Serial.print(param1Reg);
+    Serial.print(value1);
+    Serial.print(value2);
     
   }else{
     Serial.println("Instruction ADD ERROR");
@@ -114,11 +156,17 @@ void executeADD(){
 
 void executeSUB(){
   if(Serial.available()==3){
-    char  param1 = (char)Serial.read();
-    char  param2 = (char)Serial.read();
-    char  param3 = (char)Serial.read();
-    
-    /*(.........)*/
+    char  param1Reg = (char)Serial.read();
+    byte  param2Reg = (byte)Serial.read();
+    byte  param3Reg = (byte)Serial.read();
+
+    byte value1 = raeadRegister(param2Reg);
+    byte value2 = raeadRegister(param3Reg);
+
+    Serial.print(SUB);
+    Serial.print(param1Reg);
+    Serial.print(value1);
+    Serial.print(value2);
     
   }else{
     Serial.println("Instruction SUB ERROR");
@@ -127,10 +175,16 @@ void executeSUB(){
 
 void executeADDI(){
   if(Serial.available()==3){
-    char  param1 = (char)Serial.read();
-    char  param2 = (char)Serial.read();
-    char  param3 = (char)Serial.read();
-    /*(.........)*/
+    char  param1Reg = (char)Serial.read();
+    byte  param2Reg = (byte)Serial.read();
+    byte  param2Value2 = (byte)Serial.read();
+
+    byte value1 = raeadRegister(param2Reg);
+
+    Serial.print(ADDI);
+    Serial.print(param1Reg);
+    Serial.print(value1);
+    Serial.print(param2Value2);
     
   }else{
     Serial.println("Instruction ADDI ERROR");
@@ -140,16 +194,22 @@ void executeADDI(){
 
 void executeLW(){
   if(Serial.available()==3){
-    char  param1 = (char)Serial.read();
-    char  param2 = (char)Serial.read();
-    char  param3 = (char)Serial.read();
-    
-    /*(.........)*/
+    char  param1Reg = (char)Serial.read();
+    byte  param2Const = (byte)Serial.read();
+    byte  param3Reg = (byte)Serial.read();
+
+    byte valueAddress = raeadRegister(param3Reg);
+
+    Serial.print(LW);
+    Serial.print(param1Reg);
+    Serial.print(param2Const );
+    Serial.print(valueAddress);
     
   }else{
     Serial.println("Instruction LW ERROR");
   }
 }
+
 
 void executeSW(){
   if(Serial.available()==3){
