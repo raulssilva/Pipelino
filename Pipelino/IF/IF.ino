@@ -52,16 +52,66 @@ void setup(){
   lcd.setCursor(0, 0);
   lcd.print("Card initialized.");
   
-  File assemblyFile = SD.open("Assembly_Code.txt");
-
+  File assemblyFile = SD.open("code.txt");
+  
   if (assemblyFile){
+    String opCode = "";
+    String param1 = "";
+    String param2 = "";
+    String param3 = "";
+    String instruction = "";
+    
     // Read byte-by-byte from the file until there's nothing else in it
     while (assemblyFile.available()) {
-      Serial.write(assemblyFile.read());
+      if(opCode == ""){
+        opCode = readParam(assemblyFile);
+      }
+      
+      switch(opCode.length()){
+        case 2:
+          //Load ou Store
+          param1 = readParam(assemblyFile);
+          param2 = readParam(assemblyFile);
+          break;
+        case 3:
+          //ADD, SUB, BEQ, BNE, SLL e SRL
+          param1 = readParam(assemblyFile);
+          param2 = readParam(assemblyFile);
+          param3 = readParam(assemblyFile);
+          break;
+        default:
+          //ADDI
+          param1 = readParam(assemblyFile);
+          param2 = readParam(assemblyFile);
+          param3 = readParam(assemblyFile);
+      }
+      
+      instruction = opCode + " " + param1 + " " + param2 + " " + param3;
+      
+      lcd.clear();
+      lcd.setCursor(6,0);
+      lcd.print(opCode);
+      lcd.setCursor(2,1);
+      lcd.print(param1 + " " + param2 + " " + param3);
+      
+      Serial.print(instruction);
+      delay(3000);
+      
+      opCode = "";
+      param1 = "";
+      param2 = "";
+      param3 = "";
+
+//      Serial.write(assemblyFile.read());
     }
     assemblyFile.close();
+    
+    lcd.clear();
+    lcd.setCursor(1,0);
+    lcd.print("End of program");
+    
   }else{
-        lcd.clear();
+    lcd.clear();
     lcd.setCursor(4, 0);
     lcd.print("[ERROR]");
     lcd.setCursor(0, 1);
@@ -70,13 +120,18 @@ void setup(){
 }
 
 void loop(){
+  
 }
 
-
-
-
-
-
-
-
-
+String readParam(File assemblyFile){
+  char aux;
+  String param = "";
+  while (assemblyFile.available()) {
+    aux = assemblyFile.read();
+    if(aux == ' ' || aux == '\n' || aux == '\t'){
+      return param;
+    }else{
+      param += aux;
+    }
+  }
+}
