@@ -2,7 +2,7 @@
  Makers: Felipe Barbalho Rocha and Raul Silveira Silva
  
  The circuit (LCD 16x2):
- * LCD RS pin to digital pin 10
+ * LCD RS pin to digital pin 9
  * LCD Enable pin to digital pin 8
  * LCD D4 pin to digital pin 5
  * LCD D5 pin to digital pin 6
