@@ -57,6 +57,7 @@ void setup(){
     writeBackSerial.begin(9600);
     lcd.begin(16, 2); 
     lcd.setCursor(0,0); 
+    String texto = operators[ADD];
 }
 
 void loop(){
@@ -84,10 +85,8 @@ void writeRegister(byte address, byte data){
 
 /*Ação do WriteBack*/
 void writeBackSerialEvent(){
-    
     if(writeBackSerial.available()){
-      delay(10);
-      Serial.println("[writeBack]");
+      Serial.println("entrou aqui");
         /*char address = writeBackSerial.read();
         byte data = writeBackSerial.read();
         writeRegister(address, data);
@@ -97,22 +96,29 @@ void writeBackSerialEvent(){
 
 /*Ação da Serial principal*/
 void inSerialEvent(){
-   if(Serial.available()){
-        delay(10);
+    if(Serial.available()){
+      
         instructionReading();
-   }
+    }
 }
 
 /*Lêr apenas o OP*/
 void instructionReading(){
   char op = (char)Serial.read();
   decodeInstruction(op);
+
+  /*Captura a instrução*/
+  //String str =  Serial.readString();
+  /*Imprime na serial (teste)*/
+  //Serial.println(str);
+  /*Imprime no LCD*/
+  //lcd.clear();
+  //lcd.println(str);  
 }
 
 void decodeInstruction(char op){
     switch(op){
        case ADD:
-        Serial.println("TESTANDO: ");
          decodeADD();
          break;
        case SUB:
@@ -149,14 +155,14 @@ void decodeInstruction(char op){
          decodeJAL();
          break;
        default:
-         showLCD(operators[(byte)op]+" ERROR");
+         //Serial.println("Instruction ERROR");
+         showLCD(operators[(byte)op]+" ERROR!");
          break;
     }
 }
 
 void showLCD(String text){
     lcd.clear();
-    Serial.println("TESTANDO: "+text);
     lcd.println(text);
     delay(clock);
 }
@@ -174,8 +180,10 @@ void decodeADD(){
     byte value1 = readRegister(param2Reg);
     byte value2 = readRegister(param3Reg);
     
+
     showLCD(operators[ADD]+" "+registers[param1Reg]+" "+registers[param2Reg]+" "+registers[param3Reg]);
     
+
     /*Manda os dados para o próximo estágio = (ADD [ENDEREÇO DE ESCRITA] [VALOR] [VALOR])*/
     Serial.print(ADD);
     Serial.print(param1Reg);
@@ -190,14 +198,12 @@ void decodeADD(){
 
 void decodeSUB(){
   if(Serial.available()==3){
-    byte  param1Reg = Serial.read();
-    byte  param2Reg = Serial.read();
-    byte  param3Reg = Serial.read();
+    char  param1Reg = (char)Serial.read();
+    byte  param2Reg = (byte)Serial.read();
+    byte  param3Reg = (byte)Serial.read();
 
     byte value1 = readRegister(param2Reg);
     byte value2 = readRegister(param3Reg);
-
-    showLCD(operators[SUB]+" "+registers[param1Reg]+" "+registers[param2Reg]+" "+registers[param3Reg]);
 
     Serial.print(SUB);
     Serial.print(param1Reg);
@@ -211,13 +217,11 @@ void decodeSUB(){
 
 void decodeADDI(){
   if(Serial.available()==3){
-    char  param1Reg = Serial.read();
-    byte  param2Reg = Serial.read();
-    byte  param2Value2 = Serial.read();
+    char  param1Reg = (char)Serial.read();
+    byte  param2Reg = (byte)Serial.read();
+    byte  param2Value2 = (byte)Serial.read();
 
     byte value1 = readRegister(param2Reg);
-
-    showLCD(operators[ADDI]+" "+registers[param1Reg]+" "+registers[param2Reg]+" "+param2Value2);
 
     Serial.print(ADDI);
     Serial.print(param1Reg);
