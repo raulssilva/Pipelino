@@ -51,19 +51,16 @@ String param1 = "";
 String param2 = "";
 String param3 = "";
 
-byte opCodeByte = 0;
+char opCodeByte = 0;
 char param1Byte = 0;
 char param2Byte = 0;
 char param3Byte = 0;
 
 void loop(){
-  byte opCodeByte = 0;
   if(Serial.available()){
     opCodeByte = Serial.read();
-    String x = operators[opCodeByte];
-    Serial.println(x);
-    delay(500);
   }
-  
-  
+  String x = operators[opCodeByte];
+  Serial.println(x);
+  delay(500);
 }

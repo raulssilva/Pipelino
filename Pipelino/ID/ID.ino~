@@ -163,7 +163,7 @@ void decodeInstruction(byte op){
 /*Exibe a instrução no LCD*/
 void showLCD(String text){
     lcd.clear();
-    Serial.println("\nTESTANDO: "+text);
+    Serial.println("TESTANDO: "+text);
     lcd.println(text);
     delay(clock);
 }
@@ -331,7 +331,7 @@ void decodeBEQ(){
     byte value1 = readRegister(param1Reg);
     byte value2 = readRegister(param2Reg);
 
-    showLCD(operators[BEQ]+" "+registers[param1Reg]+" "+registers[param2Reg]+" "+param3Const);
+    showLCD(operators[SRL]+" "+registers[param1Reg]+" "+registers[param2Reg]+" "+param3Const);
 
     Serial.print(SRL);
     Serial.print(value1);
@@ -352,7 +352,7 @@ void decodeBNE(){
     byte value1 = readRegister(param1Reg);
     byte value2 = readRegister(param2Reg);
 
-    showLCD(operators[BNE]+" "+registers[param1Reg]+" "+registers[param2Reg]+" "+param3Const);
+    showLCD(operators[SRL]+" "+registers[param1Reg]+" "+registers[param2Reg]+" "+param3Const);
 
     Serial.print(SRL);
     Serial.print(value1);
