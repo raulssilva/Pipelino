@@ -32,21 +32,13 @@
 #define SRL    0b00000110
 #define BEQ    0b00000111
 #define BNE    0b00001000
-
-#define J      0b00001001
-#define JR     0b00001010
-#define JAL    0b00001011
 /*---------------------------*/
 
 #define clock 2000
 
-const String operators[] = {"add","sub","addi","lw","sw","sll",
-"srl","beq","bne","j","jr","jal"};
+const String operators[] = {"ADD","SUB","ADDI","LW","SW","SLL","SRL","BEQ","BNE"};
 
-const String registers[] = {"$0","$at","$v0","$v1","$a0","$a1",
-"$a2","$a3","$t0","$t1","$t2","$t3","$t4","$t5","$t6",
-"$t7","$s0","$s1","$s2","$s3","$s4","$s5","$s6","$s7",
-"$t8","$t9","$k0","$k1","$gp","$sp","$fp","$ra"};
+const String registers[] = {"$0","$s0","$s1","$s2","$s3","$s4","$s5","$s6","$s7"};
 
 SoftwareSerial writeBackSerial(10, 11); // RX, TX
 LiquidCrystal lcd(9, 8, 5, 6, 3, 2);
@@ -137,15 +129,6 @@ void decodeInstruction(char op){
        case BNE:
          decodeBNE();
          break;
-       case J:
-           decodeJ();
-           break;
-       case JR:
-           decodeJR();
-           break;
-       case JAL:
-           decodeJAL();
-           break;
        default:
            showLCD(operators[(byte)op]+" ERROR");
            break;
@@ -210,7 +193,7 @@ void decodeSUB(){
 
 void decodeADDI(){
   if(Serial.available()==3){
-    char  param1Reg = Serial.read();
+    byte  param1Reg = Serial.read();
     byte  param2Reg = Serial.read();
     byte  param2Value2 = Serial.read();
 
@@ -231,9 +214,9 @@ void decodeADDI(){
 
 void decodeLW(){
   if(Serial.available()==3){
-    char  param1Reg = (char)Serial.read();
-    byte  param2Const = (byte)Serial.read();
-    byte  param3Reg = (byte)Serial.read();
+    byte  param1Reg = Serial.read();
+    byte  param2Const = Serial.read();
+    byte  param3Reg = Serial.read();
 
     byte valueAddress = readRegister(param3Reg);
     
@@ -254,9 +237,9 @@ void decodeLW(){
 
 void decodeSW(){
   if(Serial.available()==3){
-    byte  param1Reg = (byte)Serial.read();
-    byte  param2Const = (byte)Serial.read();
-    byte  param3Reg = (byte)Serial.read();
+    byte  param1Reg = Serial.read();
+    byte  param2Const = Serial.read();
+    byte  param3Reg = Serial.read();
 
     byte valueStore = readRegister(param1Reg);
     byte valueAddress = readRegister(param3Reg);
@@ -276,10 +259,18 @@ void decodeSW(){
 /*Não implementei o restante*/
 void decodeSLL(){
   if(Serial.available()==3){
-    char  param1 = (char)Serial.read();
-    char  param2 = (char)Serial.read();
-    char  param3 = (char)Serial.read();
+    byte  param1Reg = Serial.read();
+    byte  param2Reg = Serial.read();
+    byte  param3Const = Serial.read();
   
+    byte value = readRegister(param2Reg);
+
+    showLCD(operators[SLL]+" "+registers[param1Reg]+" "+value+" "+param3Const);
+
+    Serial.print(SLL);
+    Serial.print(param1Reg);
+    Serial.print(valueAddress);
+    Serial.print(param3Const);
     
   }else{
     Serial.println("Instruction SLL ERROR");
@@ -288,10 +279,18 @@ void decodeSLL(){
 
 void decodeSRL(){
   if(Serial.available()==3){
-    char  param1 = (char)Serial.read();
-    char  param2 = (char)Serial.read();
-    char  param3 = (char)Serial.read();
+    byte  param1Reg = Serial.read();
+    byte  param2Reg = Serial.read();
+    byte  param3Const = Serial.read();
     
+    byte value = readRegister(param2Reg);
+
+    showLCD(operators[SRL]+" "+registers[param1Reg]+" "+value+" "+param3Const);
+
+    Serial.print(SRL);
+    Serial.print(param1Reg);
+    Serial.print(valueAddress);
+    Serial.print(param3Const);
     
   }else{
     Serial.println("Instruction SRL ERROR");
@@ -300,10 +299,19 @@ void decodeSRL(){
 
 void decodeBEQ(){
   if(Serial.available()==3){
-    char  param1 = (char)Serial.read();
-    char  param2 = (char)Serial.read();
-    char  param3 = (char)Serial.read();
+    byte param1Reg = Serial.read();
+    byte param2Reg = Serial.read();
+    byte param3Const = Serial.read();
     
+    byte value1 = readRegister(param1Reg);
+    byte value2 = readRegister(param2Reg);
+
+    showLCD(operators[SRL]+" "+registers[param1Reg]+" "+registers[param2Reg]+" "+param3Const);
+
+    Serial.print(SRL);
+    Serial.print(value1);
+    Serial.print(value2);
+    Serial.print(param3Const);
     
   }else{
     Serial.println("Instruction BEQ ERROR");
@@ -312,50 +320,25 @@ void decodeBEQ(){
 
 void decodeBNE(){
   if(Serial.available()==3){
-    char  param1 = (char)Serial.read();
-    char  param2 = (char)Serial.read();
-    char  param3 = (char)Serial.read();
+    byte param1 = Serial.read();
+    byte param2 = Serial.read();
+    byte param3 = Serial.read();
     
+    byte value1 = readRegister(param1Reg);
+    byte value2 = readRegister(param2Reg);
+
+    showLCD(operators[SRL]+" "+registers[param1Reg]+" "+registers[param2Reg]+" "+param3Const);
+
+    Serial.print(SRL);
+    Serial.print(value1);
+    Serial.print(value2);
+    Serial.print(param3Const);
     
   }else{
     Serial.println("Instruction BNE ERROR");
   }
 }
 
-void decodeJ(){
-  if(Serial.available()==3){
-    char  param1 = (char)Serial.read();
-    char  param2 = (char)Serial.read();
-    char  param3 = (char)Serial.read();
-    
-    
-  }else{
-    Serial.println("Instruction J ERROR");
-  }
-}
 
-void decodeJR(){
-  if(Serial.available()==3){
-    char  param1 = (char)Serial.read();
-    char  param2 = (char)Serial.read();
-    char  param3 = (char)Serial.read();
-    
-    
-  }else{
-    Serial.println("Instruction JR ERROR");
-  }
-}
-
-void decodeJAL(){
-  if(Serial.available()==3){
-    char  param1 = (char)Serial.read();
-    char  param2 = (char)Serial.read();
-    char  param3 = (char)Serial.read();
-    
-    
-  }else{
-    Serial.println("Instruction JAL ERROR");
-  }
-}
 
 
