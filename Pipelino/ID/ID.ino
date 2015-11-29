@@ -48,7 +48,7 @@
 #define BNE    0b00001000
 
 /*Clock de ciclo do PipeLine*/
-#define clock 2000
+#define clock 3000
 
 /*---RX e TX  do WriteBack--*/
 #define WRITE_BACK_RX 10
@@ -73,7 +73,7 @@ void setup(){
     Serial.begin(BAUDS_RATE);
     writeBackSerial.begin(BAUDS_RATE);
     lcd.begin(16, 2); 
-    lcd.setCursor(0,0); 
+    lcd.setCursor(0,0);
 }
 
 void loop(){

@@ -35,7 +35,7 @@ const String operators[] = {"ADD","SUB","ADDI","LW","SW","SLL","SRL","BEQ","BNE"
 
 const String registers[] = {"$0","$s0","$s1","$s2","$s3","$s4","$s5","$s6","$s7"};
 
-#define CLOCK 10000
+#define CLOCK 3000
 
 void setup(){
   lcd.begin(16, 2);
@@ -88,7 +88,7 @@ void setup(){
           for(byte i = 0; i<9; i++){
             if(registers[i] == param1){
               Serial.print(i);
-              Serial.print(param2.toInt());
+              Serial.print((char)param2.toInt());
             }
           }
           
