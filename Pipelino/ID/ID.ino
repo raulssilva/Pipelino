@@ -20,6 +20,20 @@
 #include <SoftwareSerial.h>
 #include <LiquidCrystal.h> 
 
+/*Taxa de transmissão*/
+#define BAUDS_RATE 9600
+
+/*Tempo de delay para leitura dos dados da serial*/
+#define TIME_WAIT_SERIAL 10
+
+/*---------PINOS LCD---------*/
+#define LCD_RS 9
+#define LCD_Enable 8
+#define LCD_D4 5
+#define LCD_D5 6
+#define LCD_D6 3
+#define LCD_D7 2
+
 /*--------Código de OP-------*/
 #define ADD    0b00000000
 #define SUB    0b00000001
@@ -32,21 +46,32 @@
 #define SRL    0b00000110
 #define BEQ    0b00000111
 #define BNE    0b00001000
-/*---------------------------*/
 
+/*Clock de ciclo do PipeLine*/
 #define clock 2000
 
+/*---RX e TX  do WriteBack--*/
+#define WRITE_BACK_RX 10
+#define WRITE_BACK_TX 11
+
+/*---Oprações para exibição na tela--*/
 const String operators[] = {"ADD","SUB","ADDI","LW","SW","SLL","SRL","BEQ","BNE"};
 
+/*---Registradores para exibição na tela--*/
 const String registers[] = {"$0","$s0","$s1","$s2","$s3","$s4","$s5","$s6","$s7"};
 
-SoftwareSerial writeBackSerial(10, 11); // RX, TX
-LiquidCrystal lcd(9, 8, 5, 6, 3, 2);
+/*Inicializa sosftSerial para writeBack*/
+SoftwareSerial writeBackSerial(WRITE_BACK_RX, WRITE_BACK_TX);
+
+/*Inicializa LCD*/
+LiquidCrystal lcd(LCD_RS, LCD_Enable, LCD_D4, LCD_D5, LCD_D6, LCD_D7);
+
+/*--Flag para quando precisar de WriteBack--*/
 bool writeBackWait = false;
 
 void setup(){
-    Serial.begin(9600);
-    writeBackSerial.begin(9600);
+    Serial.begin(BAUDS_RATE);
+    writeBackSerial.begin(BAUDS_RATE);
     lcd.begin(16, 2); 
     lcd.setCursor(0,0); 
 }
@@ -77,8 +102,8 @@ void writeRegister(byte address, byte data){
 /*Ação do WriteBack*/
 void writeBackSerialEvent(){
     if(writeBackSerial.available()){
-      delay(10);
-      Serial.println("[writeBack]");
+      delay(TIME_WAIT_SERIAL);
+      showLCD("[writeBack]");
         /*char address = writeBackSerial.read();
         byte data = writeBackSerial.read();
         writeRegister(address, data);
@@ -89,18 +114,18 @@ void writeBackSerialEvent(){
 /*Ação da Serial principal*/
 void inSerialEvent(){
    if(Serial.available()){
-        delay(10);
+        delay(TIME_WAIT_SERIAL);
         instructionReading();
    }
 }
 
 /*Lêr apenas o OP*/
 void instructionReading(){
-    char op = (char)Serial.read();
+    byte op = Serial.read();
     decodeInstruction(op);
 }
 
-void decodeInstruction(char op){
+void decodeInstruction(byte op){
     switch(op){
        case ADD:
            decodeADD();
@@ -130,7 +155,7 @@ void decodeInstruction(char op){
          decodeBNE();
          break;
        default:
-           showLCD(operators[(byte)op]+" ERROR");
+           showLCD(operators[op]+" ERROR");
            break;
     }
 }
@@ -269,7 +294,7 @@ void decodeSLL(){
 
     Serial.print(SLL);
     Serial.print(param1Reg);
-    Serial.print(valueAddress);
+    Serial.print(value);
     Serial.print(param3Const);
     
   }else{
@@ -289,7 +314,7 @@ void decodeSRL(){
 
     Serial.print(SRL);
     Serial.print(param1Reg);
-    Serial.print(valueAddress);
+    Serial.print(value);
     Serial.print(param3Const);
     
   }else{
@@ -320,9 +345,9 @@ void decodeBEQ(){
 
 void decodeBNE(){
   if(Serial.available()==3){
-    byte param1 = Serial.read();
-    byte param2 = Serial.read();
-    byte param3 = Serial.read();
+    byte param1Reg = Serial.read();
+    byte param2Reg = Serial.read();
+    byte param3Const = Serial.read();
     
     byte value1 = readRegister(param1Reg);
     byte value2 = readRegister(param2Reg);
