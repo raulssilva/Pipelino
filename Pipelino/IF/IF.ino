@@ -72,7 +72,7 @@ void setup(){
         opCode = readParam(assemblyFile);
         for(byte i = 0; i<9; i++){
           if(operators[i] == opCode){
-            Serial.print(i);
+            Serial.write(i);
           }
         }
       }
@@ -87,14 +87,14 @@ void setup(){
           
           for(byte i = 0; i<9; i++){
             if(registers[i] == param1){
-              Serial.print(i);
-              Serial.print((char)param2.toInt());
+              Serial.write(i);
+              Serial.print((byte)param2.toInt());
             }
           }
           
           for(byte i = 0; i<9; i++){
             if(registers[i] == param3){
-              Serial.print(i);
+              Serial.write(i);
             }
           }
           param3 = "(" + param3 + ")";
@@ -107,24 +107,24 @@ void setup(){
           
           for(byte i = 0; i<9; i++){
             if(registers[i] == param1){
-              Serial.print(i);
+              Serial.write(i);
             }
           }
           
           for(byte i = 0; i<9; i++){
             if(registers[i] == param2){
-              Serial.print(i);
+              Serial.write(i);
             }
           }
           
           if(opCode == "ADD" || opCode == "SUB"){
             for(byte i = 0; i<9; i++){
               if(registers[i] == param3){
-                Serial.print(i);
+                Serial.write(i);
               }
             }
           }else{
-            Serial.print(param3.toInt());
+            Serial.write((byte)param3.toInt());
           }
           break;
         default:
@@ -135,14 +135,14 @@ void setup(){
           
           for(byte i = 0; i<9; i++){
             if(registers[i] == param1){
-              Serial.print(i);
+              Serial.write(i);
             }
           }
           
           for(byte i = 0; i<9; i++){
             if(registers[i] == param2){
-              Serial.print(i);
-              Serial.print(param3.toInt());
+              Serial.write(i);
+              Serial.write((byte)param3.toInt());
             }
           }
       }
