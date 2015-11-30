@@ -43,7 +43,6 @@ byte param1Byte = 0;
 byte param2Byte = 0;
 byte param3Byte = 0;
 
-char aux;
 
 void loop(){
   if(Serial.available()){
@@ -65,8 +64,8 @@ void loop(){
 //        param3 = registers[param3Byte];
 
         Serial.print(param1Byte);
-        Serial.print((char)(param2.toInt())+1); // Necessario, pois se for 0 sera NULL e nao e enviado
-        Serial.print((char)(param3.toInt())+1); // Necessario, pois se for 0 sera NULL e nao e enviado
+        Serial.print((char)(param2.toInt())); // Necessario, pois se for 0 sera NULL e nao e enviado
+        Serial.print((char)(param3.toInt())); // Necessario, pois se for 0 sera NULL e nao e enviado
         break;
       case 1:
         param1Byte = (byte)(Serial.read()-48);
@@ -79,8 +78,8 @@ void loop(){
 //        param3 = registers[param3Byte];
 
         Serial.print(param1Byte);
-        Serial.print((char)(param2.toInt())+1); // Necessario, pois se for 0 sera NULL e nao e enviado
-        Serial.print((char)(param3.toInt())+1); // Necessario, pois se for 0 sera NULL e nao e enviado
+        Serial.print((char)(param2.toInt())); // Necessario, pois se for 0 sera NULL e nao e enviado
+        Serial.print((char)(param3.toInt())); // Necessario, pois se for 0 sera NULL e nao e enviado
         break;
       case 2:
         param1Byte = (byte)(Serial.read()-48);
@@ -92,13 +91,13 @@ void loop(){
         param3 = (String)param3Byte;
         
         Serial.print(param1Byte);
-        Serial.print((char)(param2.toInt())+1); // Necessario, pois se for 0 sera NULL e nao e enviado
+        Serial.print((char)(param2.toInt())); // Necessario, pois se for 0 sera NULL e nao e enviado
         Serial.print((char)param3Byte);
         break;
       case 3:
         param1Byte = (byte)(Serial.read()-48);
         param1 = registers[param1Byte];
-        param2Byte = (byte)(Serial.read()-48);
+        param2Byte = (byte)Serial.read();
         param2 = (String)param2Byte;
         param3Byte = (byte)(Serial.read()-48);
         param3 = (String)readRegister(param3Byte);
@@ -106,21 +105,21 @@ void loop(){
 
         Serial.print(param1Byte);
         Serial.print((char)param2Byte);
-        Serial.print((char)(param3.toInt())+1); // Necessario, pois se for 0 sera NULL e nao e enviado
+        Serial.print((char)(param3.toInt())); // Necessario, pois se for 0 sera NULL e nao e enviado
         break;
       case 4:
         param1Byte = (byte)(Serial.read()-48);
         param1 = (String)readRegister(param1Byte);
 //        param1 = registers[param1Byte];
-        param2Byte = (byte)(Serial.read()-48);
+        param2Byte = (byte)Serial.read();
         param2 = (String)param2Byte;
         param3Byte = (byte)(Serial.read()-48);
         param3 = (String)readRegister(param3Byte);
 //        param3 = registers[param3Byte];
 
-        Serial.print((char)(param1.toInt())+1); // Necessario, pois se for 0 sera NULL e nao e enviado
+        Serial.print((char)(param1.toInt())); // Necessario, pois se for 0 sera NULL e nao e enviado
         Serial.print((char)param2Byte);
-        Serial.print((char)(param3.toInt())+1); // Necessario, pois se for 0 sera NULL e nao e enviado
+        Serial.print((char)(param3.toInt())); // Necessario, pois se for 0 sera NULL e nao e enviado
         break;
       case 5:
         param1Byte = (byte)(Serial.read()-48);
@@ -132,7 +131,7 @@ void loop(){
         param3 = (String)param3Byte;
         
         Serial.print(param1Byte);
-        Serial.print((char)(param2.toInt())+1); // Necessario, pois se for 0 sera NULL e nao e enviado
+        Serial.print((char)(param2.toInt())); // Necessario, pois se for 0 sera NULL e nao e enviado
         Serial.print((char)param3Byte);
         break;
       case 6:
@@ -145,7 +144,7 @@ void loop(){
         param3 = (String)param3Byte;
         
         Serial.print(param1Byte);
-        Serial.print((char)(param2.toInt())+1); // Necessario, pois se for 0 sera NULL e nao e enviado
+        Serial.print((char)(param2.toInt())); // Necessario, pois se for 0 sera NULL e nao e enviado
         Serial.print((char)param3Byte);
         break;
       case 7:
@@ -158,8 +157,8 @@ void loop(){
         param3Byte = (byte)(Serial.read()-48);
         param3 = (String)param3Byte;
         
-        Serial.print((char)(param1.toInt())+1); // Necessario, pois se for 0 sera NULL e nao e enviado
-        Serial.print((char)(param2.toInt())+1); // Necessario, pois se for 0 sera NULL e nao e enviado
+        Serial.print((char)(param1.toInt())); // Necessario, pois se for 0 sera NULL e nao e enviado
+        Serial.print((char)(param2.toInt())); // Necessario, pois se for 0 sera NULL e nao e enviado
         Serial.print((char)param3Byte);
         break;
       default:
@@ -172,8 +171,8 @@ void loop(){
         param3Byte = (byte)(Serial.read()-48);
         param3 = (String)param3Byte;
         
-        Serial.print((char)(param1.toInt())+1); // Necessario, pois se for 0 sera NULL e nao e enviado
-        Serial.print((char)(param2.toInt())+1); // Necessario, pois se for 0 sera NULL e nao e enviado
+        Serial.print((char)(param1.toInt())); // Necessario, pois se for 0 sera NULL e nao e enviado
+        Serial.print((char)(param2.toInt())); // Necessario, pois se for 0 sera NULL e nao e enviado
         Serial.print((char)param3Byte);
     }
     lcd.clear();
