@@ -17,7 +17,9 @@
  */
 
 #include <LiquidCrystal.h>
+#include <SoftwareSerial.h>
 
+SoftwareSerial controllerSerial(10, 11); // RX, TX
 LiquidCrystal lcd(9, 8, 5, 6, 3, 2);
 
 const String operators[] = {"ADD","SUB","ADDI","LW","SW","SLL","SRL","BEQ","BNE"};
@@ -29,6 +31,7 @@ const String registers[] = {"$0","$s0","$s1","$s2","$s3","$s4","$s5","$s6","$s7"
 void setup(){
   lcd.begin(16, 2);
   Serial.begin(9600);
+  controllerSerial.begin(9600);
 }
 
 String opCode = "";
@@ -48,7 +51,6 @@ void loop(){
     if(opCode == ""){
       opCodeByte = (byte)(Serial.read()-48);
       opCode = operators[opCodeByte];
-      Serial.print(opCodeByte);
     }
     
     switch(opCodeByte){
@@ -59,6 +61,7 @@ void loop(){
         param3Byte = (byte)Serial.read();
         param2Byte += param3Byte;
         param2 = (String)param2Byte;
+        Serial.print(opCodeByte);
         Serial.print(param1Byte);
         Serial.print(param2Byte);
         break;
@@ -69,6 +72,7 @@ void loop(){
         param3Byte = (byte)Serial.read();
         param2Byte -= param3Byte;
         param2 = (String)param2Byte;
+        Serial.print(opCodeByte);
         Serial.print(param1Byte);
         Serial.print(param2Byte); //Verificar resultados negativos
         break;
@@ -79,6 +83,7 @@ void loop(){
         param3Byte = (byte)Serial.read();
         param2Byte += param3Byte;
         param2 = (String)param2Byte;
+        Serial.print(opCodeByte);
         Serial.print(param1Byte);
         Serial.print(param2Byte);
         break;
@@ -89,6 +94,7 @@ void loop(){
         param2 = (String)param2Byte;
         param3Byte = (byte)Serial.read();
         param3 = (String)param3Byte;
+        Serial.print(opCodeByte);
         Serial.print(param1Byte);
         Serial.print(param2Byte);
         Serial.print(param3Byte);
@@ -100,6 +106,7 @@ void loop(){
         param2 = (String)param2Byte;
         param3Byte = (byte)Serial.read();
         param3 = (String)param3Byte;
+        Serial.print(opCodeByte);
         Serial.print(param1Byte);
         Serial.print(param2Byte);
         Serial.print(param3Byte);
@@ -111,6 +118,7 @@ void loop(){
         param3Byte = (byte)Serial.read();
         aux = (param2Byte << param3Byte);
         param2 = (String)aux;
+        Serial.print(opCodeByte);
         Serial.print(param1Byte);
         Serial.print(aux);
         break;
@@ -121,6 +129,7 @@ void loop(){
         param3Byte = (byte)Serial.read();
         aux = (param2Byte >> param3Byte);
         param2 = (String)aux;
+        Serial.print(opCodeByte);
         Serial.print(param1Byte);
         Serial.print(aux);
         break;
@@ -132,11 +141,14 @@ void loop(){
         if(param1Byte == param2Byte){
           aux = 1;
           param1 = "True";
+          param2Byte = (byte)Serial.read();
+          param2 = (String)param2Byte;
+          controllerSerial.print(param2Byte);
         }
-        param2Byte = (byte)Serial.read();
-        param2 = (String)param2Byte;
-        Serial.print(aux);
-        Serial.print(param2Byte);
+
+//        Serial.print(opCodeByte);
+//        Serial.print(aux);
+//        Serial.print(param2Byte);
         break;
       default:
         param1Byte = (byte)Serial.read();
@@ -146,11 +158,13 @@ void loop(){
         if(param1Byte != param2Byte){
           aux = 1;
           param1 = "True";
+          param2Byte = (byte)Serial.read();
+          param2 = (String)param2Byte;
+          controllerSerial.print(param2Byte);
         }
-        param2Byte = (byte)Serial.read();
-        param2 = (String)param2Byte;
-        Serial.print(aux);
-        Serial.print(param2Byte);
+//        Serial.print(opCodeByte);
+//        Serial.print(aux);
+//        Serial.print(param2Byte);
     }
     lcd.clear();
     lcd.setCursor(6,0);
