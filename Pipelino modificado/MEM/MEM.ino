@@ -31,11 +31,27 @@
 #define CHIP_SELECT 4
 LiquidCrystal lcd(9, 8, 5, 6, 3, 2);
 
+
+/*--------Código de OP-------*/
+#define ADD    0b00110000
+#define SUB    0b00110001
+#define ADDI   0b00110010
+
+#define LW     0b00110011
+#define SW     0b00110100
+
+#define SLL    0b00110101
+#define SRL    0b00110110
+#define BEQ    0b00110111
+#define BNE    0b00111000
+
 const String operators[] = {"ADD","SUB","ADDI","LW","SW","SLL","SRL","BEQ","BNE"};
 
-const String registers[] = {"$0","$s0","$s1","$s2","$s3","$s4","$s5","$s6","$s7"};
+byte memoryLogic[512] = {0};
 
 #define CLOCK 3000
+
+#define MEMORIA "MEM.txt"
 
 void setup(){
   lcd.begin(16, 2);
@@ -59,64 +75,81 @@ void setup(){
   lcd.print("Card initialized.");
 }
 
-String opCode = "";
-String param1 = "";
-String param2 = "";
-String param3 = "";
-
-byte opCodeByte = 0;
-byte param1Byte = 0;
-byte param2Byte = 0;
-byte param3Byte = 0;
-
-String memContent = "";
 
 void loop(){
-  if(Serial.available()){
-    if(opCode == ""){
-      opCodeByte = (byte)(Serial.read()-48);
-      opCode = operators[opCodeByte];
-      if(opCodeByte == 3){
-        param1Byte = (byte)(Serial.read()-48);
-        param1 = registers[param1Byte];
-        param2Byte = (byte)Serial.read();
-        param3Byte = (byte)Serial.read();
-        
-        File memory = SD.open("mem.txt");
-        
-        if(memory){
-          byte lineCounter = 0;
-          while(memory.available()){
-            if(lineCounter == param3Byte){
-              byte colunCounter = 0;
-              while(memory.available()){
-                char aux = memory.read();
-                if(aux == '\n'){
-                  break;
-                }
-                
-                if(colunCounter >= param2Byte && colunCounter < (param2Byte+4)){
-                  memContent += aux;
-                }
-                colunCounter++;
-              }
-            }else{
-              while(memory.available()){
-                char aux = memory.read();
-                if(aux == '\n'){
-                  break;
-                }
-              }
-              lineCounter++;
-            }
-          }
-        }
-        
-        Serial.println(memContent);
-        
-      }else if(opCodeByte == 4){
-        
-      }
-    }
-  }
+     
 }
+
+void serialEvent(){
+    delay(10);
+
+    byte op = Serial.read();
+    if(Serial.available()>=2){
+
+       if( op == LW){
+        byte reg = Serial.read();
+        byte cons = Serial.read();
+        byte address = Serial.read();
+        int addressReal = cons + address;
+        byte data = readMemory(addressReal);
+        
+        putNext(reg, data);
+      
+      }else if( op == SW){
+          byte data = Serial.read();
+          byte cons = Serial.read();
+          byte address = Serial.read();
+          int addressReal = cons + address;
+          writeMemory(addressReal, data);
+  
+        
+      }else if(op == ADD || op == SUB || op == ADDI || op == SLL || op == SRL){
+          byte reg = Serial.read();
+          byte value = Serial.read();
+          putNext(reg, value);
+        
+      }else if(op == BEQ || op == BNE){
+          /*Não faz nada*/
+        
+      }else{
+          /*ERRO*/
+      }
+      
+    }
+   
+}
+
+void putNext(byte reg, byte value){
+    /*Serial.println("testando");
+    char teste1 = reg + 48;
+    int teste2 = value;
+    Serial.println(teste1);
+    Serial.println(teste2);*/
+    Serial.write(reg);
+    Serial.write(value);
+}
+
+byte readMemory(int address){
+  byte data =  memoryLogic[address];
+  return data;
+}
+
+
+void writeMemory(int address, byte data){
+  //Salva na memória lógica
+  memoryLogic[address] = data;
+
+  SD.remove(MEMORIA);
+  //Abre o arquivo
+  File memory = SD.open(MEMORIA, FILE_WRITE);
+
+  //Salva a memória lógica no arquivo
+  for (int i = 0; i < 512; i++) {
+     int n = memoryLogic[i];
+     memory.println(n);
+  }
+
+  //Fecha o arquivo
+  memory.close();
+}
+
