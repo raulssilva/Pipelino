@@ -31,6 +31,8 @@
 #define CHIP_SELECT 4
 LiquidCrystal lcd(9, 8, 5, 6, 3, 2);
 
+
+
 const String operators[] = {"ADD","SUB","ADDI","LW","SW","SLL","SRL","BEQ","BNE"};
 
 const String registers[] = {"$0","$s0","$s1","$s2","$s3","$s4","$s5","$s6","$s7"};

@@ -71,10 +71,9 @@ void setup(){
     return;
   }
   lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.print("Card initialized.");
+  lcd.setCursor(4, 0);
+  lcd.print("Waiting..");
 }
-
 
 void loop(){
      
@@ -84,16 +83,20 @@ void serialEvent(){
     delay(10);
 
     byte op = Serial.read();
+
+    String saidaLCD = "";
     if(Serial.available()>=2){
 
        if( op == LW){
-        byte reg = Serial.read();
-        byte cons = Serial.read();
-        byte address = Serial.read();
-        int addressReal = cons + address;
-        byte data = readMemory(addressReal);
+          byte reg = Serial.read();
+          byte cons = Serial.read();
+          byte address = Serial.read();
+          int addressReal = cons + address;
+          byte data = readMemory(addressReal);
+
+          outLCD(operators[op-48], "Loading $"+String(addressReal));
         
-        putNext(reg, data);
+          putNext(reg, data);
       
       }else if( op == SW){
           byte data = Serial.read();
@@ -101,12 +104,15 @@ void serialEvent(){
           byte address = Serial.read();
           int addressReal = cons + address;
           writeMemory(addressReal, data);
-  
+
+          outLCD(operators[op-48], "Store $"+String(addressReal));
         
       }else if(op == ADD || op == SUB || op == ADDI || op == SLL || op == SRL){
           byte reg = Serial.read();
           byte value = Serial.read();
           putNext(reg, value);
+
+          outLCD(operators[op-48], " WriteBack");
         
       }else if(op == BEQ || op == BNE){
           /*Não faz nada*/
@@ -114,9 +120,19 @@ void serialEvent(){
       }else{
           /*ERRO*/
       }
-      
     }
-   
+}
+
+void outLCD(String title, String description){
+  lcd.clear();
+  lcd.setCursor(6,0);
+  lcd.print(title);
+  lcd.setCursor(2,1);
+  lcd.print(description);
+  delay(CLOCK);
+  lcd.clear();
+  lcd.setCursor(4, 0);
+  lcd.print("Waiting..");
 }
 
 void putNext(byte reg, byte value){
