@@ -29,25 +29,29 @@
 #include <LiquidCrystal.h>
 
 #define CHIP_SELECT 4
-LiquidCrystal lcd(9, 8, 5, 6, 3, 2);
-
-
-
-const String operators[] = {"ADD","SUB","ADDI","LW","SW","SLL","SRL","BEQ","BNE"};
-
-const String registers[] = {"$0","$s0","$s1","$s2","$s3","$s4","$s5","$s6","$s7"};
-
 #define CLOCK 3000
 
+// Definicao dos pinos do LCD para exibicao das informacoes
+LiquidCrystal lcd(9, 8, 5, 6, 3, 2);
+
+// Array com as operacoes que podem ser usadas. Cada indice representa o OP code
+const String operators[] = {"ADD","SUB","ADDI","LW","SW","SLL","SRL","BEQ","BNE"};
+// Array com os registradores que podem ser usados. Cada indice representa a referencia do registrador na EEPROM
+const String registers[] = {"$0","$s0","$s1","$s2","$s3","$s4","$s5","$s6","$s7"};
+
 void setup(){
+  // Inicia o LCD 16x2
   lcd.begin(16, 2);
+  // Inicia a Serial com um baudrate de 9600bps
   Serial.begin(9600);
   
+  // Mensagem inicial no LCD
   lcd.setCursor(2, 0);
   lcd.print("Initializing");
   lcd.setCursor(3, 1);
   lcd.print("SD card...");
   
+  // Verificacao do cartao
   if (!SD.begin(CHIP_SELECT)){
     lcd.clear();
     lcd.setCursor(4, 0);
@@ -60,16 +64,19 @@ void setup(){
   lcd.setCursor(0, 0);
   lcd.print("Card initialized.");
   
+  // Abrir arquivo com codigo Assembly
   File assemblyFile = SD.open("code.txt");
   
+  // Verificacao do arquivo com codigo
   if (assemblyFile){
     String opCode = "";
     String param1 = "";
     String param2 = "";
     String param3 = "";
     
-    // Read byte-by-byte from the file until there's nothing else in it
+    // Le do arquivo byte-a-byte ate que nao tenha mais nada a ser lido
     while (assemblyFile.available()) {
+      // Verifica se houve salto e pula a quantidade de linhas que foram informadas
       if(Serial.available()==1){
         byte brench = (byte)Serial.read();
         for(brench -= 1; brench > 0; brench--){
@@ -78,6 +85,7 @@ void setup(){
         }
       }
 
+      // Se o OP code nao tiver sido lido, significa que o primeiro byte e do OP code
       if(opCode == ""){
         opCode = readParam(assemblyFile);
         for(byte i = 0; i<9; i++){
@@ -87,6 +95,7 @@ void setup(){
         }
       }
       
+      // Apos a leitura do OP code e verificado quais dados devem ser lidos, baseados no OP code
       switch(opCode.length()){
         case 2:
           //Load ou Store
@@ -157,26 +166,33 @@ void setup(){
           }
       }
       
+      // Limpa o LCD e escreve a operacao seguida dos operandos
       lcd.clear();
       lcd.setCursor(6,0);
       lcd.print(opCode);
       lcd.setCursor(2,1);
       lcd.print(param1 + " " + param2 + " " + param3);
 
+      // Aguarda um tempo para a proxima interaca do pipeline
       delay(CLOCK);
       
+      // Limpa as variaveis de leitura
       opCode = "";
       param1 = "";
       param2 = "";
       param3 = "";
 
     }
+
+    // Fecha o arquivo apos a leitura de todo o programa
     assemblyFile.close();
     
+    // Limpa o LCD e informa que o programa foi concluido
     lcd.clear();
     lcd.setCursor(1,0);
     lcd.print("End of program");
     
+  // Caso o arquivo com codigo em Assembly nao seja encotrado, informa que nao ha codigo no cartao
   }else{
     lcd.clear();
     lcd.setCursor(4, 0);
@@ -187,9 +203,13 @@ void setup(){
 }
 
 void loop(){
-  
 }
 
+/*
+ * Le um parametro da instrucao
+ * @param assemblyFile Arquivo aberto.
+ * @return String com o parametro lido.
+ */
 String readParam(File assemblyFile){
   char aux;
   String param = "";
@@ -203,6 +223,11 @@ String readParam(File assemblyFile){
   }
 }
 
+/*
+ * Le uma constante da instrucao
+ * @param assemblyFile Arquivo aberto.
+ * @return String com a constante lida.
+ */
 String readParamConst(File assemblyFile){
   char aux;
   String param = "";

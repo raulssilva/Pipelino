@@ -22,61 +22,76 @@
 
 #define CLOCK 3000
 
-const String operators[] = {"ADD","SUB","ADDI","LW","SW","SLL","SRL","BEQ","BNE"};
-
-const String registers[] = {"$0","$s0","$s1","$s2","$s3","$s4","$s5","$s6","$s7"};
-
+// Definicao dos pinos do LCD para exibicao das informacoes
 LiquidCrystal lcd(9, 8, 5, 6, 3, 2);
+// Definicao de uma segunda porta de comunicacao Serial para o Write Back
 SoftwareSerial controllerSerial(10, 11); // RX, TX
 
+// Array com as operacoes que podem ser usadas. Cada indice representa o OP code
+const String operators[] = {"ADD","SUB","ADDI","LW","SW","SLL","SRL","BEQ","BNE"};
+// Array com os registradores que podem ser usados. Cada indice representa a referencia do registrador na EEPROM
+const String registers[] = {"$0","$s0","$s1","$s2","$s3","$s4","$s5","$s6","$s7"};
+
 void setup(){
+  // Inicia o LCD 16x2
   lcd.begin(16, 2);
+  // Inicia a Serial com um baudrate de 9600bps
   Serial.begin(9600);
+  // Inicia a Serial do Write Back com um baudrate de 9600bps
   controllerSerial.begin(9600);
+  // Pino de notificacao de salto
   pinMode(12, INPUT);
 }
 
-
+// Variaveis de exibicao no LCD
 String opCode = "";
 String param1 = "";
 String param2 = "";
 String param3 = "";
 
+// Variaveis de indentificadores de OP code, registradores e constantes
 byte opCodeByte = 0;
 byte param1Byte = 0;
 byte param2Byte = 0;
 byte param3Byte = 0;
 
+// Flag para tratamento de salto
 bool brenchFlag = false;
 
 void loop(){
+  // Verifica se houve salto e ativa a flag
   if(digitalRead(12)==1){
     controllerSerial.read();
     brenchFlag = true;
+  // Verifica se houve Write Back e escreva na EEPROM
   }else if(controllerSerial.available()){
     byte address = controllerSerial.read();
     byte value = controllerSerial.read();
     writeRegister(address, value);
   }
+  // Verifica se uma nova instrucao chegou pela Serial
   if(Serial.available()){
+    // Se o OP code nao tiver sido lido, significa que o primeiro byte e do OP code
     if(opCode == ""){
       opCodeByte = (byte)(Serial.read()-48);
       opCode = operators[opCodeByte];
+      // Se a Flag nao estiver ativada, a proxima instrucao deve ser executada
       if(!brenchFlag){
         Serial.print(opCodeByte);
       }
     }
     
+    // Apos a leitura do OP code e verificado quais dados devem ser lidos, baseados no OP code
     switch(opCodeByte){
       case 0:
+        // ADD
         param1Byte = (byte)(Serial.read()-48);
         param1 = registers[param1Byte];
         param2Byte = (byte)(Serial.read()-48);
         param2 = (String)readRegister(param2Byte);
-//        param2 = registers[param2Byte];
         param3Byte = (byte)(Serial.read()-48);
         param3 = (String)readRegister(param3Byte);
-//        param3 = registers[param3Byte];
+        // Se a Flag nao estiver ativada, a proxima instrucao deve ser executada
         if(!brenchFlag){
           Serial.print(param1Byte);
           Serial.print((char)(param2.toInt())); // Necessario, pois se for 0 sera NULL e nao e enviado
@@ -84,14 +99,14 @@ void loop(){
         }
         break;
       case 1:
+        // SUB
         param1Byte = (byte)(Serial.read()-48);
         param1 = registers[param1Byte];
         param2Byte = (byte)(Serial.read()-48);
         param2 = (String)readRegister(param2Byte);
-//        param2 = registers[param2Byte];
         param3Byte = (byte)(Serial.read()-48);
         param3 = (String)readRegister(param3Byte);
-//        param3 = registers[param3Byte];
+        // Se a Flag nao estiver ativada, a proxima instrucao deve ser executada
         if(!brenchFlag){
           Serial.print(param1Byte);
           Serial.print((char)(param2.toInt())); // Necessario, pois se for 0 sera NULL e nao e enviado

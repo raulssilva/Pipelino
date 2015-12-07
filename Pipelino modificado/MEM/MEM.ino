@@ -36,10 +36,8 @@ LiquidCrystal lcd(9, 8, 5, 6, 3, 2);
 #define ADD    0b00000000
 #define SUB    0b00000001
 #define ADDI   0b00000010
-
 #define LW     0b00000011
 #define SW     0b00000100
-
 #define SLL    0b00000101
 #define SRL    0b00000110
 #define BEQ    0b00000111
@@ -54,9 +52,11 @@ byte memoryLogic[512] = {0};
 #define MEMORIA "MEM.txt"
 
 void setup(){
-  lcd.begin(16, 2);
+  
   Serial.begin(9600);
   
+  /*Procedimento de leitura do LCD*/
+  lcd.begin(16, 2);
   lcd.setCursor(2, 0);
   lcd.print("Initializing");
   lcd.setCursor(3, 1);
@@ -77,14 +77,20 @@ void loop(){
      
 }
 
+/*Interrupção da Serial*/
 void serialEvent(){
+    /*Tempo para chegar todos os bytes*/
     delay(10);
-
+	
+    /*Lêr a operação*/
     byte op = Serial.read();
-
+    
+    /*Mensagem que será exibida no LCD*/
     String saidaLCD = "";
-    if(Serial.available()>=2){
 
+    if(Serial.available()>=2){
+	
+       /*Load Word*/
        if( op == LW){
           byte reg = Serial.read();
           byte cons = Serial.read();
@@ -96,6 +102,7 @@ void serialEvent(){
         
           putNext(reg, data);
       
+      /*Store Word*/
       }else if( op == SW){
           byte data = Serial.read();
           byte cons = Serial.read();
@@ -104,7 +111,8 @@ void serialEvent(){
           writeMemory(addressReal, data);
 
           outLCD(operators[op-48], "Store $"+String(addressReal));
-        
+
+      /*Direto para o Write Back*/
       }else if(op == ADD || op == SUB || op == ADDI || op == SLL || op == SRL){
           byte reg = Serial.read();
           byte value = Serial.read();
@@ -121,6 +129,7 @@ void serialEvent(){
     }
 }
 
+/*Exibe a intrução no Display LCD*/
 void outLCD(String title, String description){
   lcd.clear();
   lcd.setCursor(6,0);
@@ -131,22 +140,19 @@ void outLCD(String title, String description){
   lcd.clear();
 }
 
+/*Envia os dados para write back*/
 void putNext(byte reg, byte value){
-    /*Serial.println("testando");
-    char teste1 = reg + 48;
-    int teste2 = value;
-    Serial.println(teste1);
-    Serial.println(teste2);*/
     Serial.write(reg);
     Serial.write(value);
 }
 
+/*Lêr um byte apartir de um endereço da memória e retorna o byte lido*/
 byte readMemory(int address){
   byte data =  memoryLogic[address];
   return data;
 }
 
-
+/*Escreve um byte na memória papartir do endereço informado*/
 void writeMemory(int address, byte data){
   //Salva na memória lógica
   memoryLogic[address] = data;
