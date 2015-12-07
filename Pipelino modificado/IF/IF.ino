@@ -70,7 +70,7 @@ void setup(){
     
     // Read byte-by-byte from the file until there's nothing else in it
     while (assemblyFile.available()) {
-      if(Serial.available()){
+      if(Serial.available()==1){
         byte brench = (byte)Serial.read();
         for(brench -= 1; brench > 0; brench--){
           while(assemblyFile.read() != '\n'){

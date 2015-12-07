@@ -33,17 +33,17 @@ LiquidCrystal lcd(9, 8, 5, 6, 3, 2);
 
 
 /*--------Código de OP-------*/
-#define ADD    0b00110000
-#define SUB    0b00110001
-#define ADDI   0b00110010
+#define ADD    0b00000000
+#define SUB    0b00000001
+#define ADDI   0b00000010
 
-#define LW     0b00110011
-#define SW     0b00110100
+#define LW     0b00000011
+#define SW     0b00000100
 
-#define SLL    0b00110101
-#define SRL    0b00110110
-#define BEQ    0b00110111
-#define BNE    0b00111000
+#define SLL    0b00000101
+#define SRL    0b00000110
+#define BEQ    0b00000111
+#define BNE    0b00001000
 
 const String operators[] = {"ADD","SUB","ADDI","LW","SW","SLL","SRL","BEQ","BNE"};
 
@@ -71,8 +71,6 @@ void setup(){
     return;
   }
   lcd.clear();
-  lcd.setCursor(4, 0);
-  lcd.print("Waiting..");
 }
 
 void loop(){
@@ -131,8 +129,6 @@ void outLCD(String title, String description){
   lcd.print(description);
   delay(CLOCK);
   lcd.clear();
-  lcd.setCursor(4, 0);
-  lcd.print("Waiting..");
 }
 
 void putNext(byte reg, byte value){

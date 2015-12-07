@@ -33,6 +33,7 @@ void setup(){
   lcd.begin(16, 2);
   Serial.begin(9600);
   controllerSerial.begin(9600);
+  pinMode(12, INPUT);
 }
 
 
@@ -49,9 +50,13 @@ byte param3Byte = 0;
 bool brenchFlag = false;
 
 void loop(){
-  if(controllerSerial.available()){
+  if(digitalRead(12)==1){
     controllerSerial.read();
     brenchFlag = true;
+  }else if(controllerSerial.available()){
+    byte address = controllerSerial.read();
+    byte value = controllerSerial.read();
+    writeRegister(address, value);
   }
   if(Serial.available()){
     if(opCode == ""){
@@ -211,6 +216,10 @@ void loop(){
   
   delay(CLOCK);
   lcd.clear();
+}
+
+void writeRegister(byte address, byte value){
+  EEPROM.write(address, value);
 }
 
 byte readRegister(byte address){

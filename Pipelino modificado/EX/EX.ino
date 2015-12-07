@@ -61,9 +61,9 @@ void loop(){
         param3Byte = (byte)Serial.read();
         param2Byte += param3Byte;
         param2 = (String)param2Byte;
-        Serial.print(opCodeByte);
-        Serial.print(param1Byte);
-        Serial.print(param2Byte);
+        Serial.write(opCodeByte);
+        Serial.write(param1Byte);
+        Serial.write(param2Byte);
         break;
       case 1:
         param1Byte = (byte)(Serial.read()-48);
@@ -72,9 +72,9 @@ void loop(){
         param3Byte = (byte)Serial.read();
         param2Byte -= param3Byte;
         param2 = (String)param2Byte;
-        Serial.print(opCodeByte);
-        Serial.print(param1Byte);
-        Serial.print(param2Byte); //Verificar resultados negativos
+        Serial.write(opCodeByte);
+        Serial.write(param1Byte);
+        Serial.write(param2Byte); //Verificar resultados negativos
         break;
       case 2:
         param1Byte = (byte)(Serial.read()-48);
@@ -83,9 +83,9 @@ void loop(){
         param3Byte = (byte)Serial.read();
         param2Byte += param3Byte;
         param2 = (String)param2Byte;
-        Serial.print(opCodeByte);
-        Serial.print(param1Byte);
-        Serial.print(param2Byte);
+        Serial.write(opCodeByte);
+        Serial.write(param1Byte);
+        Serial.write(param2Byte);
         break;
       case 3:
         param1Byte = (byte)(Serial.read()-48);
@@ -94,10 +94,10 @@ void loop(){
         param2 = (String)param2Byte;
         param3Byte = (byte)Serial.read();
         param3 = (String)param3Byte;
-        Serial.print(opCodeByte);
-        Serial.print(param1Byte);
-        Serial.print(param2Byte);
-        Serial.print(param3Byte);
+        Serial.write(opCodeByte);
+        Serial.write(param1Byte);
+        Serial.write(param2Byte);
+        Serial.write(param3Byte);
         break;
       case 4:
         param1Byte = (byte)Serial.read();
@@ -106,10 +106,10 @@ void loop(){
         param2 = (String)param2Byte;
         param3Byte = (byte)Serial.read();
         param3 = (String)param3Byte;
-        Serial.print(opCodeByte);
-        Serial.print(param1Byte);
-        Serial.print(param2Byte);
-        Serial.print(param3Byte);
+        Serial.write(opCodeByte);
+        Serial.write(param1Byte);
+        Serial.write(param2Byte);
+        Serial.write(param3Byte);
         break;
       case 5:
         param1Byte = (byte)(Serial.read()-48);
@@ -118,9 +118,9 @@ void loop(){
         param3Byte = (byte)Serial.read();
         aux = (param2Byte << param3Byte);
         param2 = (String)aux;
-        Serial.print(opCodeByte);
-        Serial.print(param1Byte);
-        Serial.print(aux);
+        Serial.write(opCodeByte);
+        Serial.write(param1Byte);
+        Serial.write(aux);
         break;
       case 6:
         param1Byte = (byte)(Serial.read()-48);
@@ -129,9 +129,9 @@ void loop(){
         param3Byte = (byte)Serial.read();
         aux = (param2Byte >> param3Byte);
         param2 = (String)aux;
-        Serial.print(opCodeByte);
-        Serial.print(param1Byte);
-        Serial.print(aux);
+        Serial.write(opCodeByte);
+        Serial.write(param1Byte);
+        Serial.write(aux);
         break;
       case 7:
         param1Byte = (byte)Serial.read();
