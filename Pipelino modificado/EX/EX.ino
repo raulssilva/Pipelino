@@ -32,8 +32,11 @@ const String registers[] = {"$0","$s0","$s1","$s2","$s3","$s4","$s5","$s6","$s7"
 #define CLOCK 3000
 
 void setup(){
+  // Inicia o LCD 16x2
   lcd.begin(16, 2);
+  // Inicia a Serial com um baudrate de 9600bps
   Serial.begin(9600);
+  // Inicia a Serial do Write Back com um baudrate de 9600bps
   controllerSerial.begin(9600);
 }
 
@@ -66,78 +69,74 @@ void loop(){
     
     switch(opCodeByte){
       case 0:
-
-	/*Lêr da serial o valor dos parâmetros*/
+        /*Lêr da serial o valor dos parâmetros*/
         param1Byte = (byte)(Serial.read()-48);
-	param2Byte = (byte)Serial.read();
+        param2Byte = (byte)Serial.read();
         param3Byte = (byte)Serial.read();
 
- 	/*soma e armazena em param2Byte (por economia)*/
+ 	      /*soma e armazena em param2Byte (por economia)*/
         param2Byte += param3Byte;
 	
-	/*Armazena nas String para exibição no LCD*/
+        /*Armazena nas String para exibição no LCD*/
         param1 = registers[param1Byte];
-	param2 = (String)param2Byte;
+        param2 = (String)param2Byte;
 	
-	/*Envia os parâmetros para o estágio da Memória*/
+        /*Envia os parâmetros para o estágio da Memória*/
         Serial.write(opCodeByte);
         Serial.write(param1Byte);
         Serial.write(param2Byte);
 
         break;
       case 1:
-
-	/*Lêr da serial o valor dos parâmetros*/
+        /*Lêr da serial o valor dos parâmetros*/
         param1Byte = (byte)(Serial.read()-48);
         param2Byte = (byte)Serial.read();
         param3Byte = (byte)Serial.read();
 	
-	/*subtrai e armazena em param2Byte (por economia)*/
+        /*subtrai e armazena em param2Byte (por economia)*/
         param2Byte -= param3Byte;
 
-	/*Armazena nas String para exibição no LCD*/
-	param1 = registers[param1Byte];
+        /*Armazena nas String para exibição no LCD*/
+        param1 = registers[param1Byte];
         param2 = (String)param2Byte;
 
-	/*Envia os parâmetros para o estágio da Memória*/
+        /*Envia os parâmetros para o estágio da Memória*/
         Serial.write(opCodeByte);
         Serial.write(param1Byte);
         Serial.write(param2Byte); /*Não tratamos valores negativos*/
 
         break;
       case 2:
-
-	/*Lêr da serial o valor dos parâmetros*/
+        /*Lêr da serial o valor dos parâmetros*/
         param1Byte = (byte)(Serial.read()-48);
         param2Byte = (byte)Serial.read();
         param3Byte = (byte)Serial.read();
 	
-	/*soma e armazena em param2Byte (por economia)*/
+        /*soma e armazena em param2Byte (por economia)*/
         param2Byte += param3Byte;
 
-	/*Armazena nas String para exibição no LCD*/
-	param1 = registers[param1Byte];
+        /*Armazena nas String para exibição no LCD*/
+        param1 = registers[param1Byte];
         param2 = (String)param2Byte;
 
-	/*Envia os parâmetros para o estágio da Memória*/
+        /*Envia os parâmetros para o estágio da Memória*/
         Serial.write(opCodeByte);
         Serial.write(param1Byte);
         Serial.write(param2Byte);
 
         break;
       case 3:
-	
-	/*Lêr da serial o valor dos parâmetros*/
+        /*Lêr da serial o valor dos parâmetros*/
         param1Byte = (byte)(Serial.read()-48);
         param2Byte = (byte)Serial.read();
         param3Byte = (byte)Serial.read();
 
-	/*Armazena nas String para exibição no LCD*/
-	param1 = registers[param1Byte];
+        /*Armazena nas String para exibição no LCD*/
+        param1 = registers[param1Byte];
         param2 = (String)param2Byte;
-	param3 = (String)param3Byte;
+        param3 = (String)param3Byte;
         
-	/*Envia os parâmetros para o estágio da Memória*/
+        /*Envia os parâmetros para o estágio da Memória*/
         Serial.write(opCodeByte);
         Serial.write(param1Byte);
         Serial.write(param2Byte);
@@ -145,58 +144,56 @@ void loop(){
 
         break;
       case 4:
-
-	/*Lêr da serial o valor dos parâmetros*/
+        /*Lêr da serial o valor dos parâmetros*/
         param1Byte = (byte)Serial.read();
         param2Byte = (byte)Serial.read();
-	param3Byte = (byte)Serial.read();
+        param3Byte = (byte)Serial.read();
 
-	/*Armazena nas String para exibição no LCD*/
-	param1 = (String)param1Byte;
+        /*Armazena nas String para exibição no LCD*/
+        param1 = (String)param1Byte;
         param2 = (String)param2Byte;
         param3 = (String)param3Byte;
 
         /*Envia os parâmetros para o estágio da Memória*/
-	Serial.write(opCodeByte);
+        Serial.write(opCodeByte);
         Serial.write(param1Byte);
         Serial.write(param2Byte);
         Serial.write(param3Byte);
 
         break;
       case 5:
-	/*Lêr da serial o valor dos parâmetros*/
+        /*Lêr da serial o valor dos parâmetros*/
         param1Byte = (byte)(Serial.read()-48);
-	param2Byte = (byte)Serial.read();
+        param2Byte = (byte)Serial.read();
         param3Byte = (byte)Serial.read();
 
-        /**/
+        /*Variavel para alocar o valor com o shift*/
         aux = (param2Byte << param3Byte);
 
-	/*Armazena nas String para exibição no LCD*/
-	param1 = registers[param1Byte];
+        /*Armazena nas String para exibição no LCD*/
+        param1 = registers[param1Byte];
         param2 = (String)aux;
 
-	/*Envia os parâmetros para o estágio da Memória*/
+        /*Envia os parâmetros para o estágio da Memória*/
         Serial.write(opCodeByte);
         Serial.write(param1Byte);
         Serial.write(aux);
 
         break;
       case 6:
-        
         /*Lêr da serial o valor dos parâmetros*/
-	param1Byte = (byte)(Serial.read()-48);
+        param1Byte = (byte)(Serial.read()-48);
         param2Byte = (byte)Serial.read();
         param3Byte = (byte)Serial.read();
 
-	/**/
+        /*Variavel para alocar o valor com o shift*/
         aux = (param2Byte >> param3Byte);
 
-	/*Armazena nas String para exibição no LCD*/
-	param1 = registers[param1Byte];
+        /*Armazena nas String para exibição no LCD*/
+        param1 = registers[param1Byte];
         param2 = (String)aux;
 
-	/*Envia os parâmetros para o estágio da Memória*/
+        /*Envia os parâmetros para o estágio da Memória*/
         Serial.write(opCodeByte);
         Serial.write(param1Byte);
         Serial.write(aux);
@@ -204,59 +201,50 @@ void loop(){
         break;
 
       case 7:
-	/*Lêr da serial o valor dos parâmetros*/
+        /*Lêr da serial o valor dos parâmetros*/
         param1Byte = (byte)Serial.read();
         param2Byte = (byte)Serial.read();
 
-	/**/
-        aux = 0;
-	/**/
+        /*Verificacao booleana do brench*/
         param1 = "False";
-	/**/
         if(param1Byte == param2Byte){
           aux = 1;
           param1 = "True";
           param2Byte = (byte)Serial.read();
           param2 = (String)param2Byte;
-	  /**/
           controllerSerial.print(param2Byte);
         }
 
         break;
 
       default:
-	/*Lêr da serial o valor dos parâmetros*/
+        /*Lêr da serial o valor dos parâmetros*/
         param1Byte = (byte)Serial.read();
         param2Byte = (byte)Serial.read();
 	
-	/**/
-        aux = 0;
-	/**/
+        /*Verificacao booleana do brench*/
         param1 = "False";
-	/**/
         if(param1Byte != param2Byte){
           aux = 1;
           param1 = "True";
           param2Byte = (byte)Serial.read();
           param2 = (String)param2Byte;
-	  /**/
           controllerSerial.print(param2Byte);
         }
     }
-    /**/
+    /*Exibe no LCD a operacao e os valores operados*/
     lcd.clear();
     lcd.setCursor(6,0);
     lcd.print(opCode);
     lcd.setCursor(2,1);
     lcd.print(param1 + " " + param2 + " " + param3);
   }
-  /**/
+  /*Limpa as variaveis de entrada*/
   opCode = "";
   param1 = "";
   param2 = "";
   param3 = "";
  
-  /**/
   delay(CLOCK);
   lcd.clear();
 }

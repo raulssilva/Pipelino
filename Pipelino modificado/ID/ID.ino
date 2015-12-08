@@ -94,8 +94,8 @@ void loop(){
         // Se a Flag nao estiver ativada, a proxima instrucao deve ser executada
         if(!brenchFlag){
           Serial.print(param1Byte);
-          Serial.print((char)(param2.toInt())); // Necessario, pois se for 0 sera NULL e nao e enviado
-          Serial.print((char)(param3.toInt())); // Necessario, pois se for 0 sera NULL e nao e enviado
+          Serial.print((char)(param2.toInt()));
+          Serial.print((char)(param3.toInt()));
         }
         break;
       case 1:
@@ -109,111 +109,116 @@ void loop(){
         // Se a Flag nao estiver ativada, a proxima instrucao deve ser executada
         if(!brenchFlag){
           Serial.print(param1Byte);
-          Serial.print((char)(param2.toInt())); // Necessario, pois se for 0 sera NULL e nao e enviado
-          Serial.print((char)(param3.toInt())); // Necessario, pois se for 0 sera NULL e nao e enviado
+          Serial.print((char)(param2.toInt()));
+          Serial.print((char)(param3.toInt()));
         }
         break;
       case 2:
+        // ADDI
         param1Byte = (byte)(Serial.read()-48);
         param1 = registers[param1Byte];
         param2Byte = (byte)(Serial.read()-48);
         param2 = (String)readRegister(param2Byte);
-//        param2 = registers[param2Byte];
         param3Byte = (byte)(Serial.read()-48);
         param3 = (String)param3Byte;
+        // Se a Flag nao estiver ativada, a proxima instrucao deve ser executada
         if(!brenchFlag){
           Serial.print(param1Byte);
-          Serial.print((char)(param2.toInt())); // Necessario, pois se for 0 sera NULL e nao e enviado
+          Serial.print((char)(param2.toInt()));
           Serial.print((char)param3Byte);
         }
         break;
       case 3:
+        //LW
         param1Byte = (byte)(Serial.read()-48);
         param1 = registers[param1Byte];
         param2Byte = (byte)Serial.read();
         param2 = (String)param2Byte;
         param3Byte = (byte)(Serial.read()-48);
         param3 = (String)readRegister(param3Byte);
-//        param3 = registers[param3Byte];
+        // Se a Flag nao estiver ativada, a proxima instrucao deve ser executada
         if(!brenchFlag){
           Serial.print(param1Byte);
           Serial.print((char)param2Byte);
-          Serial.print((char)(param3.toInt())); // Necessario, pois se for 0 sera NULL e nao e enviado
+          Serial.print((char)(param3.toInt()));
         }
         break;
       case 4:
+        // SW
         param1Byte = (byte)(Serial.read()-48);
         param1 = (String)readRegister(param1Byte);
-//        param1 = registers[param1Byte];
         param2Byte = (byte)Serial.read();
         param2 = (String)param2Byte;
         param3Byte = (byte)(Serial.read()-48);
         param3 = (String)readRegister(param3Byte);
-//        param3 = registers[param3Byte];
+        // Se a Flag nao estiver ativada, a proxima instrucao deve ser executada
         if(!brenchFlag){
-          Serial.print((char)(param1.toInt())); // Necessario, pois se for 0 sera NULL e nao e enviado
+          Serial.print((char)(param1.toInt()));
           Serial.print((char)param2Byte);
-          Serial.print((char)(param3.toInt())); // Necessario, pois se for 0 sera NULL e nao e enviado
+          Serial.print((char)(param3.toInt()));
         }
         break;
       case 5:
+        // SLL
         param1Byte = (byte)(Serial.read()-48);
         param1 = registers[param1Byte];
         param2Byte = (byte)(Serial.read()-48);
         param2 = (String)readRegister(param2Byte);
-//        param2 = registers[param2Byte];
         param3Byte = (byte)(Serial.read()-48);
         param3 = (String)param3Byte;
+        // Se a Flag nao estiver ativada, a proxima instrucao deve ser executada
         if(!brenchFlag){
           Serial.print(param1Byte);
-          Serial.print((char)(param2.toInt())); // Necessario, pois se for 0 sera NULL e nao e enviado
+          Serial.print((char)(param2.toInt()));
           Serial.print((char)param3Byte);
         }
         break;
       case 6:
+        // SRL
         param1Byte = (byte)(Serial.read()-48);
         param1 = registers[param1Byte];
         param2Byte = (byte)(Serial.read()-48);
         param2 = (String)readRegister(param2Byte);
-//        param2 = registers[param2Byte];
         param3Byte = (byte)(Serial.read()-48);
         param3 = (String)param3Byte;
+        // Se a Flag nao estiver ativada, a proxima instrucao deve ser executada
         if(!brenchFlag){
           Serial.print(param1Byte);
-          Serial.print((char)(param2.toInt())); // Necessario, pois se for 0 sera NULL e nao e enviado
+          Serial.print((char)(param2.toInt()));
           Serial.print((char)param3Byte);
         }
         break;
       case 7:
+        // BEQ
         param1Byte = (byte)(Serial.read()-48);
         param1 = (String)readRegister(param1Byte);
-//        param1 = registers[param1Byte];
         param2Byte = (byte)(Serial.read()-48);
         param2 = (String)readRegister(param2Byte);
-//        param2 = registers[param2Byte];
         param3Byte = (byte)(Serial.read()-48);
         param3 = (String)param3Byte;
+        // Se a Flag nao estiver ativada, a proxima instrucao deve ser executada
         if(!brenchFlag){
-          Serial.print((char)(param1.toInt())); // Necessario, pois se for 0 sera NULL e nao e enviado
-          Serial.print((char)(param2.toInt())); // Necessario, pois se for 0 sera NULL e nao e enviado
+          Serial.print((char)(param1.toInt()));
+          Serial.print((char)(param2.toInt()));
           Serial.print((char)param3Byte);
         }
         break;
       default:
+        // BNE
         param1Byte = (byte)(Serial.read()-48);
         param1 = (String)readRegister(param1Byte);
-//        param1 = registers[param1Byte];
         param2Byte = (byte)(Serial.read()-48);
         param2 = (String)readRegister(param2Byte);
-//        param2 = registers[param2Byte];
         param3Byte = (byte)(Serial.read()-48);
         param3 = (String)param3Byte;
+        // Se a Flag nao estiver ativada, a proxima instrucao deve ser executada
         if(!brenchFlag){
-          Serial.print((char)(param1.toInt())); // Necessario, pois se for 0 sera NULL e nao e enviado
-          Serial.print((char)(param2.toInt())); // Necessario, pois se for 0 sera NULL e nao e enviado
+          Serial.print((char)(param1.toInt()));
+          Serial.print((char)(param2.toInt()));
           Serial.print((char)param3Byte);
         }
     }
+    // Se a Flag nao estiver ativada, a proxima instrucao deve ser exibida no LCD
     if(!brenchFlag){
       lcd.clear();
       lcd.setCursor(6,0);
@@ -224,19 +229,32 @@ void loop(){
     brenchFlag = false;
   }
   
+  // Limpa as variaveis de leitura
   opCode = "";
   param1 = "";
   param2 = "";
   param3 = "";
   
+  // Aguarda um tempo para a proxima interaca do pipeline
   delay(CLOCK);
+  // Limpa o LCD
   lcd.clear();
 }
 
+/*
+ * Guarda um valor em um registrador na EEPROM
+ * @param address Byte com o endereco do registrador na EEPROM
+ * @param value Byte com o conteudo a ser gravado
+ */
 void writeRegister(byte address, byte value){
   EEPROM.write(address, value);
 }
 
+/*
+ * Le um valor o valor de um registrador na EEPROM
+ * @param address Byte com o endereco do registrador na EEPROM
+ * @return Byte com o conteudo do registrador
+ */
 byte readRegister(byte address){
     byte value = EEPROM.read(address);
     return value;
